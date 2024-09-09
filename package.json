@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.3.7",
+    "@headlessui/react": "^2.1.5",
     "convex": "^1.15.0",
     "leaflet": "^1.9.4",
     "moment": "^2.30.1",

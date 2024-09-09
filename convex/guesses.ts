@@ -17,6 +17,5 @@ export const addGuess = mutation({
       longitude: args.longitude,
       userId: args.userId,
     });
-    console.log(guessId + " has been processed.");
   },
 });

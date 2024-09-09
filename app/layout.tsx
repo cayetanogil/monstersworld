@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./globals.css";
 
 import { ConvexClientProvider } from "../app/providers/ConvexClientProvider";
 
@@ -10,10 +11,8 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 
-import "./globals.css";
-
 export const metadata: Metadata = {
-  title: "Monsters World",
+  title: "MonstersWorld",
   description: "Find monsters around the world!",
 };
 
@@ -25,15 +24,10 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className="mx-auto flex max-w-screen-2xl flex-col text-slate-800">
-          <header className="flex h-12 flex-row items-center justify-between px-4">
-            <div className="text-xl">MonstersWorld</div>
-            <nav className="flex flex-row gap-4">
-              <ul>
-                <li>
-                  <a href="#">About</a>
-                </li>
-              </ul>
+        <body className="mx-auto flex max-w-screen-2xl flex-col bg-slate-700 text-slate-100">
+          <header className="flex h-16 flex-row items-center justify-between px-8">
+            <div className="font-mono text-3xl">MonstersWorld</div>
+            <nav className="flex flex-row gap-6">
               <SignedOut>
                 <SignInButton />
               </SignedOut>
@@ -42,7 +36,7 @@ export default function RootLayout({
               </SignedIn>
             </nav>
           </header>
-          <main className="flex w-full flex-row justify-between gap-8 py-12">
+          <main className="flex w-full flex-row justify-between gap-8 py-20">
             <ConvexClientProvider>{children}</ConvexClientProvider>
           </main>
         </body>

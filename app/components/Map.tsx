@@ -1,57 +1,45 @@
 import { useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  useMapEvents,
-  Marker,
-  Popup,
-} from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import moment from "moment";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
-interface MonsterLocation {
-  date: string;
-  filename: string;
-  lat: number;
-  lng: number;
-  tags: string[];
-}
+import { MapContainer, TileLayer, useMapEvents, Marker } from "react-leaflet";
+import L from "leaflet";
 
-interface MapProps {
-  monster: MonsterLocation;
-  userId: string;
-}
+import "leaflet/dist/leaflet.css";
 
-export const HaversineDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number,
-) => {
-  const R = 3958.8; // Radius of the Earth in miles
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) *
-      Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distance in miles
+import { HaversineDistance } from "../utils";
+import { Guess, MapProps } from "../types";
+
+const getSeverityColor = (distance: number) => {
+  if (distance < 25) return "bg-red-300";
+  if (distance < 150) return "bg-orange-300";
+  if (distance < 500) return "bg-yellow-300";
+  if (distance < 2500) return "bg-green-300";
+  return "bg-blue-300";
 };
 
-function LocationMarker({ monster, userId }: MapProps) {
-  const [position, setPosition] = useState<L.LatLng | null>(null);
+const createCustomIcon = (distance: number) => {
+  const severityClass = getSeverityColor(distance);
+
+  return L.divIcon({
+    className: "custom-icon",
+    html: `<div class="rounded-full w-4 h-4 ${severityClass} border-2 border-white shadow-lg"></div>`,
+  });
+};
+
+function LocationMarker({
+  monster,
+  userId,
+  onNewGuess,
+  onFound,
+}: MapProps): JSX.Element {
+  const [positions, setPositions] = useState<Guess[]>([]);
   const mutateGuess = useMutation(api.guesses.addGuess);
 
   const map = useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;
-      const todaysDate = moment().format("YYYY-MM-DD");
+      const todaysDate = new Date().toISOString();
       const correctLocation = { lat: monster.lat, lng: monster.lng };
       const distance = HaversineDistance(
         lat,
@@ -60,7 +48,7 @@ function LocationMarker({ monster, userId }: MapProps) {
         correctLocation.lng,
       );
 
-      const newGuess = {
+      const newGuess: Guess = {
         date: todaysDate,
         userId: userId,
         latitude: lat,
@@ -68,34 +56,46 @@ function LocationMarker({ monster, userId }: MapProps) {
         distance: distance,
       };
 
+      setPositions((prevPositions) => [...prevPositions, newGuess]);
+      onNewGuess(newGuess);
       mutateGuess(newGuess);
+      if (distance < 25) {
+        onFound();
+        return;
+      }
     },
   });
 
-  return position === null ? null : (
-    <Marker position={position}>
-      <Popup>
-        Your Guess
-        <br /> Latitude: {position.lat.toFixed(4)}, Longitude:{" "}
-        {position.lng.toFixed(4)}
-      </Popup>
-    </Marker>
+  return (
+    <>
+      {positions.map((guess, index) => (
+        <Marker
+          key={`${guess.latitude}-${guess.longitude}`}
+          position={[guess.latitude, guess.longitude]}
+          icon={createCustomIcon(guess.distance)} // Custom marker icon
+        ></Marker>
+      ))}
+    </>
   );
 }
 
-const Map = ({ monster, userId }: MapProps) => {
+const Map = ({ monster, userId, onNewGuess, onFound }: MapProps) => {
   return (
     <MapContainer
-      center={[40, -100]} // Example valid center coordinate
+      center={[40, -100]} // Default coordinates
       zoom={3}
-      scrollWheelZoom={false}
       style={{ height: "500px", width: "100%" }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <LocationMarker monster={monster} userId={userId} />
+      <LocationMarker
+        monster={monster}
+        userId={userId}
+        onNewGuess={onNewGuess}
+        onFound={onFound}
+      />
     </MapContainer>
   );
 };
