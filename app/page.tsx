@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 
 import Image from "next/image";
 import moment from "moment";
@@ -17,13 +18,21 @@ import { api } from "../convex/_generated/api";
 
 import { useAuth } from "@clerk/nextjs";
 
-import Map from "../app/components/Map";
 import SeverityBadge from "./components/SeverityBadge";
 
 import { Guess, MonsterLocation } from "./types";
 
 export default function Home(): JSX.Element {
   const { isLoaded, userId } = useAuth();
+
+  const Map = useMemo(
+    () =>
+      dynamic(() => import("./components/Map"), {
+        loading: () => <p>A map is loading</p>,
+        ssr: false,
+      }),
+    [],
+  );
 
   const [todaysMonster, setTodaysMonster] = useState<MonsterLocation | null>(
     null,
