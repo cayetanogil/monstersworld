@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+import { Analytics } from "@vercel/analytics/react";
 import { ConvexClientProvider } from "../app/providers/ConvexClientProvider";
 
 import {
@@ -39,6 +40,7 @@ export default function RootLayout({
           <main className="flex w-full flex-row justify-between gap-8 py-20">
             <ConvexClientProvider>{children}</ConvexClientProvider>
           </main>
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
