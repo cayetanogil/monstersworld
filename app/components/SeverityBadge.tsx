@@ -1,4 +1,5 @@
 import React from "react";
+import type { JSX } from "react";
 
 const severityColors = [
   "bg-red-200",
