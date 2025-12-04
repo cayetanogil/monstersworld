@@ -16,7 +16,7 @@
     "convex": "^1.27.5",
     "leaflet": "^1.9.4",
     "moment": "^2.30.1",
-    "next": "15.5.7",
+    "next": "16.0.7",
     "react": "^19",
     "react-dom": "^19",
     "react-leaflet": "^5.0.0"
