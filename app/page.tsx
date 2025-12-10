@@ -7,7 +7,6 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import moment from "moment";
 import {
-  Description,
   Dialog,
   DialogPanel,
   DialogTitle,
@@ -96,17 +95,17 @@ export default function Home(): JSX.Element {
   if (!isLoaded || !userId) {
     return (
       <div className="mx-auto flex w-1/3 flex-col rounded-xl bg-slate-800 p-8 shadow">
-        <h2 className="mb-4 text-center text-2xl font-semibold uppercase tracking-wider text-blue-200">
+        <h2 className="mb-4 text-center text-2xl font-semibold tracking-wider text-blue-200 uppercase">
           Monster Map Challenge
         </h2>
-        <p className="mb-2 text-pretty leading-relaxed">
+        <p className="mb-2 leading-relaxed text-pretty">
           Embark on a thrilling global adventure!{" "}
         </p>
-        <p className="mb-2 text-pretty leading-relaxed">
+        <p className="mb-2 leading-relaxed text-pretty">
           Each day, a new monster image appears against a famous landmark
           background.{" "}
         </p>
-        <p className="mb-2 text-pretty leading-relaxed">
+        <p className="mb-2 leading-relaxed text-pretty">
           Your mission? Identify the location and place your guess on the map.
           The closer you get, the higher your score!
         </p>
@@ -123,8 +122,8 @@ export default function Home(): JSX.Element {
 
   return (
     <div className="flex w-full flex-row px-4">
-      <div className="flex flex-1 flex-grow flex-col justify-between p-4">
-        <h2 className="text-2xl font-semibold uppercase tracking-wider text-blue-200">
+      <div className="flex flex-1 grow flex-col justify-between p-4">
+        <h2 className="text-2xl font-semibold tracking-wider text-blue-200 uppercase">
           Sighting of the Day
         </h2>
         <p className="">
@@ -132,7 +131,7 @@ export default function Home(): JSX.Element {
           <br />
           Can you help us locate the monster?
         </p>
-        <div className="mx-auto w-80 -rotate-3 rounded-sm bg-slate-100 px-4 pb-12 pt-4 shadow-lg">
+        <div className="mx-auto w-80 -rotate-3 rounded-sm bg-slate-100 px-4 pt-4 pb-12 shadow-lg">
           <div className="relative flex h-80 flex-col items-center justify-around overflow-hidden bg-slate-300">
             {todaysMonster ? (
               <Image
@@ -149,7 +148,7 @@ export default function Home(): JSX.Element {
         </div>
       </div>
 
-      <div className="flex-1 flex-grow p-4">
+      <div className="flex-1 grow p-4">
         <div className="relative h-[540px] w-full bg-slate-100 p-4 shadow-lg">
           {todaysMonster && (
             <Map
@@ -162,8 +161,8 @@ export default function Home(): JSX.Element {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-grow flex-col p-4">
-        <h3 className="bg-slate-800 px-4 text-xl font-semibold leading-loose tracking-wide">
+      <div className="flex flex-1 grow flex-col p-4">
+        <h3 className="bg-slate-800 px-4 text-xl leading-loose font-semibold tracking-wide">
           Attempts
         </h3>
         <div className="h-[500px] overflow-x-hidden overflow-y-scroll bg-slate-600">
@@ -193,28 +192,26 @@ export default function Home(): JSX.Element {
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="max-w-lg space-y-4 rounded-2xl border-8 border-slate-700 bg-slate-800 p-12 shadow-lg">
-            <DialogTitle className="text-pretty text-xl font-bold uppercase tracking-wide">
+            <DialogTitle className="text-xl font-bold tracking-wide text-pretty uppercase">
               Congrats, you captured the monster!
             </DialogTitle>
             {todaysMonster && todaysMonster?.tags?.length > 0 && (
-              <Description>
-                <div className="text-slate-200">
-                  <div className="mb-2">
-                    <span className="font-mono uppercase">🏛️ Landmark : </span>
-                    {todaysMonster.tags[0]}
-                  </div>
-
-                  <div className="mb-2">
-                    <span className="font-mono uppercase">📍 Location : </span>
-                    {todaysMonster.tags[1]}
-                  </div>
-                  <div>
-                    <span className="block text-pretty py-2 leading-normal">
-                      {todaysMonster.tags[2]}
-                    </span>
-                  </div>
+              <div className="text-slate-200">
+                <div className="mb-2">
+                  <span className="font-mono uppercase">🏛️ Landmark : </span>
+                  {todaysMonster.tags[0]}
                 </div>
-              </Description>
+
+                <div className="mb-2">
+                  <span className="font-mono uppercase">📍 Location : </span>
+                  {todaysMonster.tags[1]}
+                </div>
+                <div>
+                  <span className="block py-2 leading-normal text-pretty">
+                    {todaysMonster.tags[2]}
+                  </span>
+                </div>
+              </div>
             )}
             <div className="flex flex-row justify-end">
               <button
