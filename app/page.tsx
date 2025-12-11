@@ -40,9 +40,7 @@ export default function Home(): JSX.Element {
   const [attempts, setAttempts] = useState<Guess[] | null>(null);
   const [isWinnerOpen, setIsWinnerOpen] = useState<boolean>(false);
 
-  const todaysDate = moment().format("YYYY-MM-DD");
-
-  const response = useQuery(api.locations.getTodaysMonster, { todaysDate });
+  const response = useQuery(api.locations.getTodaysMonster, {});
 
   function handleGuess(guess: Guess): Guess {
     const tempAttemptList: Guess[] = [guess, ...(attempts || [])];
@@ -186,7 +184,7 @@ export default function Home(): JSX.Element {
       <Dialog
         open={isWinnerOpen}
         onClose={() => setIsWinnerOpen(false)}
-        className="relative z-[9999]"
+        className="relative z-9999"
       >
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
