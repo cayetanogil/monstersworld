@@ -92,7 +92,7 @@ export default function Home(): JSX.Element {
 
   if (!isLoaded || !userId) {
     return (
-      <div className="mx-auto flex w-1/3 flex-col rounded-xl bg-slate-800 p-8 shadow">
+      <div className="mx-auto flex w-2xl flex-col rounded-xl bg-slate-800 p-8 shadow">
         <h2 className="mb-4 text-center text-2xl font-semibold tracking-wider text-blue-200 uppercase">
           Monster Map Challenge
         </h2>
@@ -119,64 +119,70 @@ export default function Home(): JSX.Element {
   }
 
   return (
-    <div className="flex w-full flex-row px-4">
-      <div className="flex flex-1 grow flex-col justify-between p-4">
-        <h2 className="text-2xl font-semibold tracking-wider text-blue-200 uppercase">
-          Sighting of the Day
-        </h2>
-        <p className="">
-          A new terrifying report just arrived!
-          <br />
-          Can you help us locate the monster?
-        </p>
-        <div className="mx-auto w-80 -rotate-3 rounded-sm bg-slate-100 px-4 pt-4 pb-12 shadow-lg">
-          <div className="relative flex h-80 flex-col items-center justify-around overflow-hidden bg-slate-300">
-            {todaysMonster ? (
-              <Image
-                src={`/monsters/${todaysMonster.filename}`}
-                alt="Picture of today's monster!"
-                fill={true}
-                priority={true}
-                sizes="1024px"
+    <>
+      <div className="flex w-full flex-row px-4">
+        {/* Sighting of the Day */}
+        <div className="flex flex-1 grow flex-col justify-between p-4">
+          <h2 className="text-2xl font-semibold tracking-wider text-blue-200 uppercase">
+            Sighting of the Day
+          </h2>
+          <p className="">
+            A new terrifying report just arrived!
+            <br />
+            Can you help us locate the monster?
+          </p>
+          <div className="mx-auto w-80 -rotate-3 rounded-sm bg-slate-100 px-4 pt-4 pb-12 shadow-lg">
+            <div className="relative flex h-80 flex-col items-center justify-around overflow-hidden bg-slate-300">
+              {todaysMonster ? (
+                <Image
+                  src={`/monsters/${todaysMonster.filename}`}
+                  alt="Picture of today's monster!"
+                  fill={true}
+                  priority={true}
+                  sizes="1024px"
+                />
+              ) : (
+                <p className="text-slate-600">Loading picture...</p>
+              )}
+            </div>
+          </div>
+        </div>
+        {/* Map */}
+        <div className="flex-1 grow p-4">
+          <div className="relative h-[540px] w-full bg-slate-100 p-4 shadow-lg">
+            {todaysMonster && (
+              <Map
+                monster={todaysMonster}
+                userId={userId}
+                onNewGuess={handleGuess}
+                onFound={handleFound}
               />
-            ) : (
-              <p className="text-slate-600">Loading picture...</p>
             )}
           </div>
         </div>
       </div>
 
-      <div className="flex-1 grow p-4">
-        <div className="relative h-[540px] w-full bg-slate-100 p-4 shadow-lg">
-          {todaysMonster && (
-            <Map
-              monster={todaysMonster}
-              userId={userId}
-              onNewGuess={handleGuess}
-              onFound={handleFound}
-            />
-          )}
-        </div>
-      </div>
-
-      <div className="flex flex-1 grow flex-col p-4">
-        <h3 className="bg-slate-800 px-4 text-xl leading-loose font-semibold tracking-wide">
-          Attempts
-        </h3>
-        <div className="h-[500px] overflow-x-hidden overflow-y-scroll bg-slate-600">
-          <ul className="h-full">
-            {attempts ? (
-              attempts.map((value, index) => (
-                <li className="border-b-2 border-b-slate-700 p-2" key={index}>
-                  {formatDistanceCopy(value.distance)}
+      <div className="flex w-full flex-row px-4">
+        {/* Attempts Log */}
+        <div className="flex flex-1 grow flex-col p-4">
+          <h3 className="bg-slate-800 px-4 text-xl leading-loose font-semibold tracking-wide">
+            Attempts
+          </h3>
+          <div className="h-[500px] overflow-x-hidden overflow-y-scroll bg-slate-600">
+            <ul className="h-full">
+              {attempts ? (
+                attempts.map((value, index) => (
+                  <li className="border-b-2 border-b-slate-700 p-2" key={index}>
+                    {formatDistanceCopy(value.distance)}
+                  </li>
+                ))
+              ) : (
+                <li className="flex h-full flex-col items-center justify-around text-slate-400">
+                  <span>Click on the map to start!</span>
                 </li>
-              ))
-            ) : (
-              <li className="flex h-full flex-col items-center justify-around text-slate-400">
-                <span>Click on the map to start!</span>
-              </li>
-            )}
-          </ul>
+              )}
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -225,6 +231,6 @@ export default function Home(): JSX.Element {
           </DialogPanel>
         </div>
       </Dialog>
-    </div>
+    </>
   );
 }
