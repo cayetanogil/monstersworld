@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.38.1",
+    "@clerk/nextjs": "^6.39.2",
     "@headlessui/react": "^2.2.10",
     "@tailwindcss/postcss": "^4.2.2",
     "@vercel/analytics": "^1.6.1",
