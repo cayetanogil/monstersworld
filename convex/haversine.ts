@@ -1,9 +1,9 @@
-export const HaversineDistance = (
+export function haversineDistanceMiles(
   lat1: number,
   lon1: number,
   lat2: number,
   lon2: number,
-) => {
+) {
   const R = 3958.8; // Radius of the Earth in miles
   const dLat = (lat2 - lat1) * (Math.PI / 180);
   const dLon = (lon2 - lon1) * (Math.PI / 180);
@@ -15,4 +15,4 @@ export const HaversineDistance = (
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c; // Distance in miles
-};
+}

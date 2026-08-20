@@ -10,7 +10,6 @@ import L from "leaflet";
 
 import "leaflet/dist/leaflet.css";
 
-import { HaversineDistance } from "../utils";
 import { Guess, MapProps } from "../types";
 
 const getSeverityColor = (distance: number) => {
@@ -30,42 +29,28 @@ const createCustomIcon = (distance: number) => {
   });
 };
 
-function LocationMarker({
-  monster,
-  userId,
-  onNewGuess,
-  onFound,
-}: MapProps): JSX.Element {
+function LocationMarker({ onNewGuess, onFound }: MapProps): JSX.Element {
   const [positions, setPositions] = useState<Guess[]>([]);
-  const mutateGuess = useMutation(api.guesses.addGuess);
+  const submitGuess = useMutation(api.guesses.submitGuess);
 
   const map = useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;
-      const todaysDate = new Date().toISOString();
-      const correctLocation = { lat: monster.lat, lng: monster.lng };
-      const distance = HaversineDistance(
-        lat,
-        lng,
-        correctLocation.lat,
-        correctLocation.lng,
-      );
 
-      const newGuess: Guess = {
-        date: todaysDate,
-        userId: userId,
-        latitude: lat,
-        longitude: lng,
-        distance: distance,
-      };
+      submitGuess({ latitude: lat, longitude: lng }).then((result) => {
+        const newGuess: Guess = {
+          latitude: lat,
+          longitude: lng,
+          distance: result.distance,
+        };
 
-      setPositions((prevPositions) => [...prevPositions, newGuess]);
-      onNewGuess(newGuess);
-      mutateGuess(newGuess);
-      if (distance < 25) {
-        onFound();
-        return;
-      }
+        setPositions((prevPositions) => [...prevPositions, newGuess]);
+        onNewGuess(newGuess);
+
+        if (result.found) {
+          onFound(result.tags ?? []);
+        }
+      });
     },
   });
 
@@ -82,7 +67,7 @@ function LocationMarker({
   );
 }
 
-const Map = ({ monster, userId, onNewGuess, onFound }: MapProps) => {
+const Map = ({ onNewGuess, onFound }: MapProps) => {
   return (
     <MapContainer
       center={[40, -100]} // Default coordinates
@@ -93,12 +78,7 @@ const Map = ({ monster, userId, onNewGuess, onFound }: MapProps) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <LocationMarker
-        monster={monster}
-        userId={userId}
-        onNewGuess={onNewGuess}
-        onFound={onFound}
-      />
+      <LocationMarker onNewGuess={onNewGuess} onFound={onFound} />
     </MapContainer>
   );
 };

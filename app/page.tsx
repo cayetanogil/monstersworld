@@ -39,16 +39,17 @@ export default function Home(): JSX.Element {
   );
   const [attempts, setAttempts] = useState<Guess[] | null>(null);
   const [isWinnerOpen, setIsWinnerOpen] = useState<boolean>(false);
+  const [winningTags, setWinningTags] = useState<string[] | null>(null);
 
   const response = useQuery(api.locations.getTodaysMonster, {});
 
-  function handleGuess(guess: Guess): Guess {
+  function handleGuess(guess: Guess): void {
     const tempAttemptList: Guess[] = [guess, ...(attempts || [])];
     setAttempts(tempAttemptList);
-    return guess;
   }
 
-  function handleFound() {
+  function handleFound(tags: string[]) {
+    setWinningTags(tags);
     setIsWinnerOpen(true);
   }
 
@@ -151,12 +152,7 @@ export default function Home(): JSX.Element {
         <div className="flex-1 grow p-4">
           <div className="relative h-[540px] w-full bg-slate-100 p-4 shadow-lg">
             {todaysMonster && (
-              <Map
-                monster={todaysMonster}
-                userId={userId}
-                onNewGuess={handleGuess}
-                onFound={handleFound}
-              />
+              <Map onNewGuess={handleGuess} onFound={handleFound} />
             )}
           </div>
         </div>
@@ -199,20 +195,20 @@ export default function Home(): JSX.Element {
             <DialogTitle className="text-xl font-bold tracking-wide text-pretty uppercase">
               Congrats, you captured the monster!
             </DialogTitle>
-            {todaysMonster && todaysMonster?.tags?.length > 0 && (
+            {winningTags && winningTags.length > 0 && (
               <div className="text-slate-200">
                 <div className="mb-2">
                   <span className="font-mono uppercase">🏛️ Landmark : </span>
-                  {todaysMonster.tags[0]}
+                  {winningTags[0]}
                 </div>
 
                 <div className="mb-2">
                   <span className="font-mono uppercase">📍 Location : </span>
-                  {todaysMonster.tags[1]}
+                  {winningTags[1]}
                 </div>
                 <div>
                   <span className="block py-2 leading-normal text-pretty">
-                    {todaysMonster.tags[2]}
+                    {winningTags[2]}
                   </span>
                 </div>
               </div>
@@ -223,6 +219,7 @@ export default function Home(): JSX.Element {
                 onClick={() => {
                   setAttempts(null);
                   setIsWinnerOpen(false);
+                  setWinningTags(null);
                 }}
               >
                 Close

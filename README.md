@@ -4,8 +4,6 @@ A small daily geo-guessing game where a monster appears somewhere in the world a
 
 It’s a map-based guessing game built with modern React/Next.js, using Leaflet for maps, Convex for backend data, and Clerk for authentication.
 
-**Live demo:** https://monstersworld.vercel.app
-
 ---
 
 ## Screenshot

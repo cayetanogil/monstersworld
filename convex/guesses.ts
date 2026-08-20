@@ -1,21 +1,47 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { getTodaysLocation } from "./locations";
+import { haversineDistanceMiles } from "./haversine";
 
-export const addGuess = mutation({
+const FOUND_THRESHOLD_MILES = 25;
+
+export const submitGuess = mutation({
   args: {
-    date: v.string(),
-    distance: v.number(),
     latitude: v.number(),
     longitude: v.number(),
-    userId: v.string(),
   },
   handler: async (ctx, args) => {
-    const guessId = await ctx.db.insert("guesses", {
-      date: args.date,
-      distance: args.distance,
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
+
+    const location = await getTodaysLocation(ctx);
+    if (!location) {
+      throw new Error("No monster location available for today");
+    }
+
+    const distance = haversineDistanceMiles(
+      args.latitude,
+      args.longitude,
+      location.lat,
+      location.lng,
+    );
+
+    await ctx.db.insert("guesses", {
+      userId: identity.subject,
+      date: new Date().toISOString(),
       latitude: args.latitude,
       longitude: args.longitude,
-      userId: args.userId,
+      distance,
     });
+
+    const found = distance < FOUND_THRESHOLD_MILES;
+
+    return {
+      distance,
+      found,
+      tags: found ? location.tags : undefined,
+    };
   },
 });
